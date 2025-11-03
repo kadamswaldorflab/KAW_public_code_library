@@ -1,6 +1,5 @@
 # Rcode_plots.R
 
-
 ########################################################################################
 #            ,,                        
 #`7MM"""Mq.`7MM           mm           
@@ -15,7 +14,10 @@
 
 
 # FACET_PLOTS_1_ROW -----
-
+cat("###### Rcode_plots.R ######\n# Use these functions to create faceted plots with 1 row... ")
+cat("\n# facet_plots_1row ")
+cat("\n# facet_plots_1row_add_sig ")
+cat("\n")
 
 
 facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
@@ -97,5 +99,6 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
   
     return(outlist)
 }
+
 
 
