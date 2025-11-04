@@ -35,17 +35,18 @@ safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
       tmp  <- rstatix::wilcox_test(data, formula = formula_str
                                    #, comparisons = list(c(g1,g2))
                                     , detailed = T) %>%
-        mutate(.test_status = "PASS", .err_msg="") %>% 
+        mutate(test_status = "PASS", err_msg="") %>% 
                 mutate(estimate = round(estimate, ndigits)
               , statistic = round(statistic, 2)
               , conf.low = round(conf.low, ndigits)
-              , conf.high = round(conf.high, ndigits))
+              , conf.high = round(conf.high, ndigits)) %>% 
+        rename(variable = .y.)
     },
     error = function(e) {
       msg <-  conditionMessage(e)
       tibble(
         estimate = NA,
-        .y. = x_var,
+        variable = x_var,
         group1 = g1,
         group2 = g2,
         statistic = NA,
@@ -54,8 +55,8 @@ safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
         conf.high = NA,
         method = "Wilcoxon",
         alternative = NA,
-        .test_status = "FAIL",
-        .err_msg = msg)
+        test_status = "FAIL",
+        err_msg = msg)
     }
   )
 }
@@ -71,24 +72,26 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
   tryCatch(
     {
       t_test(data, formula = formula_obj, detailed = T) %>%
-        mutate( .test_status = "PASS") %>% 
+        mutate( test_status = "PASS", err_msg="") %>% 
         select(-c(estimate1, estimate2)) %>% 
         select(estimate, .y., group1, group2
                , statistic, p, df, conf.low, conf.high
-               , method, alternative, .test_status) %>% 
+               , method, alternative, test_status) %>% 
         mutate(estimate = round(estimate, ndigits)
                , df = round(df, 2)
                , statistic = round(statistic, 2)
                , conf.low = round(conf.low, ndigits)
-               , conf.high = round(conf.high, ndigits))
+               , conf.high = round(conf.high, ndigits)) %>% 
+        rename(variable = .y.)
       
     },
     error = function(e) {
+      msg <-  conditionMessage(e)
       tibble(
         estimate = NA,
         # estimate1 = NA,
         # estimate2 = NA,
-        .y. = x_var,
+        variable = x_var,
         group1 = g1,
         group2 = g2,
         statistic = NA,
@@ -97,7 +100,8 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
         conf.high = NA,
         method = "T-test",
         alternative = NA,
-        .test_status = "FAIL" )
+        test_status = "FAIL",
+        err_msg = msg )
     }
   )
 }
@@ -134,13 +138,15 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
   {
     cat(paste0("\n'",g_var , "' is not a factor.  Please correct.\n"))
     return()
-  } 
+  } else {
+    cat(" . . . Pairwise comparisons across levels of ", g_var, ". . . \n")
+  }
 
   final_results_list  <- list()
   for(k in 1:length(x_vars)) 
   {
-      x_var  <- x_vars[k]
-    cat(" . . . (", i,") . . . ", x_var, " . . . \n")
+    x_var  <- x_vars[k]
+    cat("\n . . . (", k,") . . . ", x_var, " . . . \n")
     # get the descriptive stats
     descstats  <- safe_descstats(df, x_var, g_var
                  , subset_vars, ndigits) %>% 
@@ -163,7 +169,7 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
       # i <- 2
       cat(i)
       if(i%%5 == 0) {cat(".")}
-      if(i%%50 == 0) {cat("\n")}
+      if(i%%25 == 0) {cat("\n")}
       # filter by the subset
       tmp <- df
       for(c in 1:length(subset_vars)) 
@@ -234,7 +240,15 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 
   combined_final_results  <- bind_rows(final_results_list)
   
-  print(combined_final_results %>% count(.test_status, pstars))
+  # print a table of significant results 
+  sig_table  <- combined_final_results %>% 
+    mutate(sig = paste0(test_status, coalesce(pstars,"_NS"))) %>% 
+    count(variable, group1, group2, test_status, sig)  %>% 
+    pivot_wider(id_cols=c(variable, group1, group2 )
+            , names_from = sig
+            , values_from = n)
+  
+  print(sig_table)
   return(combined_final_results)
 }
 
@@ -242,19 +256,11 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 
 safe_pairwise_t_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
-  return(results)
-} 
-
-safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
-  result <- safe_pairwise_tests(df, x_varss, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
 
-
-
-
-
-
-
-
+safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
+  result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
+  return(result)
+} 
 
