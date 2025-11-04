@@ -241,14 +241,15 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 
 
 safe_pairwise_t_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
-  result <- safe_pairwise_tests(df, x_var, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+  result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
   return(results)
 } 
 
 safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
-  result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
+  result <- safe_pairwise_tests(df, x_varss, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
