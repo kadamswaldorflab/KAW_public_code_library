@@ -125,7 +125,7 @@ safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
 }
 
 
-safe_pairwise_tests <- function(df, x_var, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
+safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
 {
   # check that g_var is a factor
   is_factor <- class(df[[g_var]])
@@ -249,6 +249,7 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
