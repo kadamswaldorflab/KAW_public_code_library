@@ -213,8 +213,8 @@ safe_pairwise_tests <- function(df, x_var, g_var, subset_vars, testtype, ndigits
   
   final_results <- final_results %>% relocate(pstars, .after = p)
 
-  join_1  <- paste0("a.", xo, "=b1.", xo , collapse=" and ")
-  join_2  <- paste0("a.", xo, "=b2.", xo , collapse=" and ")
+  join_1  <- paste0("a.", subset_vars, "=b1.", subset_vars , collapse=" and ")
+  join_2  <- paste0("a.", subset_vars, "=b2.", subset_vars , collapse=" and ")
   
   sqlcode  <- paste("select a.*
             , b1.M as m1, b1.SD as sd1, b1.grpnum g1_num
@@ -241,6 +241,7 @@ safe_pairwise_wilcox_tests <- function(df, x_var, g_var, subset_vars, ndigits=3,
   result <- safe_pairwise_tests(df, x_var, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
