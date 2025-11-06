@@ -1,6 +1,7 @@
 cat("\n###### Rcode_info.R ######")
 cat("\n# info -> function to return summarized descriptive stats for a data frame")
 cat("\n# usage:  df %>% info()")
+cat("\n")
 
 info_dates <- function(x, digits=2, ...){
   
@@ -125,6 +126,7 @@ info <- function(df, mode="", newline="\n", dfname="", levelinfo="")
   # print(outlist)
   return(outlist)
 }
+
 
 
 
