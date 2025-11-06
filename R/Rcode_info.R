@@ -79,11 +79,11 @@ info <- function(df, mode="", newline="\n", dfname="", levelinfo="")
       dfname <- ifelse (length(dfname) == 1, deparse(dfname) , sub("\\(.", "", dfname[2]))
     }
     
-    # create the summary infomation
-    dates <- FtoS(data.frame(t(sapply(df[sapply( df, function(x) class(x)[1] %in% c("Date", "POSIXct"))], info_dates))))
-    nums  <- FtoS(data.frame(t(sapply(df[sapply( df, function(x) class(x)[1] %in% c("integer","numeric"))], info_numeric))))
-    txts  <- FtoS(data.frame(t(sapply(df[sapply( df, function(x) class(x)[1]=="character")], info_text))))
-    fcts  <- FtoS(data.frame(t(sapply(df[sapply( df, function(x) class(x)[1]=="factor")], info_factor))))
+    # create the summary information
+    dates <- data.frame(t(sapply(df[sapply( df, function(x) class(x)[1] %in% c("Date", "POSIXct"))], info_dates)))
+    nums  <- data.frame(t(sapply(df[sapply( df, function(x) class(x)[1] %in% c("integer","numeric"))], info_numeric)))
+    txts  <- data.frame(t(sapply(df[sapply( df, function(x) class(x)[1]=="character")], info_text)))
+    fcts  <- data.frame(t(sapply(df[sapply( df, function(x) class(x)[1]=="factor")], info_factor)))
     
     dates <- add_rownames(dates, "VarName")
     nums <- add_rownames(nums, "VarName")
@@ -123,3 +123,4 @@ info <- function(df, mode="", newline="\n", dfname="", levelinfo="")
   # print(outlist)
   return(outlist)
 }
+
