@@ -4,7 +4,7 @@ library(rstatix)
 library(purrr)
 library(sqldf)
 
-cat("###### Rcode_safe_stats.R ######\n# Use these functions to conduct pairwise tests across subsets of data... ")
+cat("\n###### Rcode_safe_stats.R ######\n# Use these functions to conduct pairwise tests across subsets of data... ")
 cat("\n# safe_pairwise_t_tests ")
 cat("\n# safe_pairwise_wilcox_tests ")
 cat("\n")
@@ -263,4 +263,5 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
