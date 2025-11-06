@@ -14,7 +14,7 @@
 
 
 # FACET_PLOTS_1_ROW -----
-cat("###### Rcode_plots.R ######\n# Use these functions to create faceted plots with 1 row... ")
+cat("\n###### Rcode_plots.R ######\n# Use these functions to create faceted plots with 1 row... ")
 cat("\n# facet_plots_1row ")
 cat("\n# facet_plots_1row_add_sig ")
 cat("\n")
@@ -99,6 +99,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
   
     return(outlist)
 }
+
 
 
 
