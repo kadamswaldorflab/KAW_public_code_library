@@ -28,8 +28,11 @@ pstars  <- function(p, show_p_LT_point1 = F)
 #  shows the direction of effect.  (E.g., when group 1 is greater than group 2, this fx returns "1>2") 
 sig_result  <- function(df){
   df <- df %>% 
-    mutate(sig_result = coalesce(ifelse(pstars=="", "",
-          paste0(g1_num, ifelse(statistic < 0, "<",">"), g2_num))),"")
+    mutate(sig_result = ifelse(pstars=="", "",
+          paste0(g1_num, ifelse(statistic < 0, "<",">"), g2_num)))
+           
+  df$sig_result  <-  coalesce(df$sig_result,"")
+  return(df)
 }
 
 safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
@@ -277,6 +280,7 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
