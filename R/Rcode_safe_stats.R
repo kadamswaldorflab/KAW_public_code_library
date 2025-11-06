@@ -23,6 +23,15 @@ pstars  <- function(p, show_p_LT_point1 = F)
   return(stars)
 }
 
+
+# adds the "sig_result" variable which is populated when a result is p < .05 and 
+#  shows the direction of effect.  (E.g., when group 1 is greater than group 2, this fx returns "1>2") 
+sig_result  <- function(df){
+  df <- df %>% 
+    mutate(sig_result = ifelse(pstars=="", "",
+          paste0(g1_num, ifelse(statistic < 0, "<",">"), g2_num)))
+}
+
 safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
     # calculate N's in case it fails
   # n1  <- data  %>% filter(.data[[g_var]] == g1) %>% nrow()
@@ -241,7 +250,10 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
   }
 
   combined_final_results  <- bind_rows(final_results_list)
-  
+
+  # add the sig_result var
+  combined_final_results  <- combined_final_results %>%  sig_result()
+
   # print a table of significant results 
   sig_table  <- combined_final_results %>% 
     mutate(sig = paste0(test_status, coalesce(pstars,"_NS"))) %>% 
@@ -265,6 +277,7 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
