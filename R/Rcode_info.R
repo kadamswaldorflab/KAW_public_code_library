@@ -1,4 +1,4 @@
-cat("\n###### Rcode_files.R ######")
+cat("\n###### Rcode_info.R ######")
 cat("\n# info -> function to return summarized descriptive stats for a data frame")
 cat("\n# usage:  df %>% info()")
 
@@ -125,5 +125,6 @@ info <- function(df, mode="", newline="\n", dfname="", levelinfo="")
   # print(outlist)
   return(outlist)
 }
+
 
 
