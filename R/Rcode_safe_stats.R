@@ -52,7 +52,8 @@ safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
               , statistic = round(statistic, 2)
               , conf.low = round(conf.low, ndigits)
               , conf.high = round(conf.high, ndigits)) %>% 
-        rename(variable = .y.)
+        rename(variable = .y.) %>%
+      select(-c(n1, n2))
     },
     error = function(e) {
       msg <-  conditionMessage(e)
@@ -280,6 +281,7 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
   result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
   return(result)
 } 
+
 
 
 
