@@ -136,11 +136,13 @@ safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
 {
   df_descstats <- df %>% 
     filter(!is.na(.data[[x_var]])) %>% 
+    mutate(rank = rank(value)) %>%
     group_by(!!!syms(c( g_var, subset_vars))) %>% 
     summarize(  N = n()
               , M = round(mean(.data[[x_var]]), ndigits)
               , SD = round(sd(.data[[x_var]]), ndigits)
               , MAX = round(max(.data[[x_var]]), ndigits)
+              , SUM_RANKS = sum(rank)
               ) %>% ungroup() %>% 
     mutate(grpnum = as.numeric(.data[["grp3"]]))
 
@@ -247,8 +249,8 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
     join_2  <- paste0("a.", subset_vars, "=b2.", subset_vars , collapse=" and ")
     
     sqlcode  <- paste("select a.*
-              , b1.N as n1, b1.M as m1, b1.SD as sd1
-              , b2.N as n2, b2.M as m2, b2.SD as sd2
+              , b1.N as n1, b1.M as m1, b1.SD as sd1, b1.SUM_RANKS sum_ranks1
+              , b2.N as n2, b2.M as m2, b2.SD as sd2, b2.SUM_RANKS sum_ranks2
               , b1.grpnum g1_num, b2.grpnum g2_num
               , (case when b1.MAX >= b2.MAX then b1.MAX else b2.MAX end) max_y
               from final_results a
@@ -322,6 +324,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
