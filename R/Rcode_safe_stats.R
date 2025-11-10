@@ -9,6 +9,24 @@ cat("\n# safe_pairwise_t_tests ")
 cat("\n# safe_pairwise_wilcox_tests ")
 cat("\n")
 
+safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
+{
+  df_descstats <- df %>% 
+    filter(!is.na(.data[[x_var]])) %>% 
+    mutate(rank = rank(.data[[x_var]])) %>%
+    group_by(!!!syms(c( g_var, subset_vars))) %>% 
+    summarize(  N = n()
+              , M = round(mean(.data[[x_var]]), ndigits)
+              , SD = round(sd(.data[[x_var]]), ndigits)
+              , MAX = round(max(.data[[x_var]]), ndigits)
+              , SUM_RANKS = sum(rank)
+              ) %>% ungroup() %>% 
+    mutate(grpnum = as.numeric(.data[[g_var]]))
+
+  return(df_descstats)
+}
+
+
 pstars  <- function(p, show_p_LT_point1 = F)
 {
   p_LT_point1  <- ifelse(show_p_LT_point1==T, "+", "")
@@ -132,22 +150,6 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
 # ndigits = 3
 # show_p_LT_point1 = F
 
-safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
-{
-  df_descstats <- df %>% 
-    filter(!is.na(.data[[x_var]])) %>% 
-    mutate(rank = rank(.data[[x_var]])) %>%
-    group_by(!!!syms(c( g_var, subset_vars))) %>% 
-    summarize(  N = n()
-              , M = round(mean(.data[[x_var]]), ndigits)
-              , SD = round(sd(.data[[x_var]]), ndigits)
-              , MAX = round(max(.data[[x_var]]), ndigits)
-              , SUM_RANKS = sum(rank)
-              ) %>% ungroup() %>% 
-    mutate(grpnum = as.numeric(.data[["grp3"]]))
-
-  return(df_descstats)
-}
 
 
 safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
@@ -324,6 +326,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
