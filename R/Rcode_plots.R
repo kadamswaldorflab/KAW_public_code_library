@@ -116,7 +116,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 {
   # The sigstats input is expected to be a data.frame with columns such as:
   # - method: name of the statistical test
-  # - .y.: target y variable name (string)
+  # - variable: target y variable name (string)
   # - g1_num, g2_num: numeric identifiers for comparison groups along the x-axis
   # - p: p-value for the pairwise comparison
   # - pstars: human-readable stars or formatting for significance
@@ -124,6 +124,8 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
   #
   # We will iterate through each plot in plotlist and add significance annotations
   # (labels) for pairwise comparisons that are significant (p < 0.05).
+
+  sigtxtsz <- 2 # text size for sig differences
 
   outlist <- list()
 
@@ -152,10 +154,13 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
     # and the current y variable. This assumes sigstats contains a column with the group_by name.
     tmp_sigstats <- sigstats %>% 
       filter(.data[[grpby_var]] == grpby_val & 
-               .y. == y_var)
+               variable == y_var)
 
     # Create a human-readable label for each comparison: "g1 vs g2 <pstars>"
-    tmp_sigstats$mylabel  <- paste0(tmp_sigstats$g1_num, " vs ",  tmp_sigstats$g2_num, " ", tmp_sigstats$pstars)
+    tmp_sigstats$mylabel  <- 
+      ifelse(is.na(tmp_sigstats$sig_result), "", 
+      ifelse(tmp_sigstats$sig_result=="", "",
+        paste0(tmp_sigstats$sig_result, tmp_sigstats$pstars)))
 
     # Compute a central x position for the label by averaging the numeric group indices.
     # This is used to position the label between the two groups on the x-axis.
@@ -184,7 +189,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
     geom_label(data = tmp_sigstats %>% filter(p < .05) 
         , aes(x=grpsnum, y = mylabel_y, label= mylabel)
          # , direction = "x", min.segment.length = 5
-        , vjust=0.5, color="black", size=2,alpha=.5) + 
+        , vjust=0.5, color="black", size=sigtxtsz ,alpha=.5) + 
       # Update the subtitle to indicate that pairwise significant comparisons are displayed
       labs(subtitle = paste(mysubtitle, 
           " (significant pairwise ", method, "displayed)"))
@@ -198,5 +203,5 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 }
 
 
-
 # End of file
+
