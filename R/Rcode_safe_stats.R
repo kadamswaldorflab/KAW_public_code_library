@@ -311,17 +311,18 @@ df_pairwisetests  <-
     , b.statistic as wilc_statistic
     , b.p as wilc_p
     , b.pstars as wilc_pstars
-    , b.sig_result as wilc_sig_result
+    , b.sig_result as wilc_sig_result, b.test_status as wilc_test_status, b.err_msg as wilc_err_msg
   from df_ttest a
     join df_wilctest b 
     ON  a.variable = b.variable
     AND a.subsetpk = b.subsetpk
     AND a.group1 = b.group1
     AND a.group2 = b.group2") %>% 
-  rename(t_statitic = statistic, t_p = p, t_pstars = pstars)
+  rename(t_statitic = statistic, t_p = p, t_pstars = pstars, t_test_status = test_status, t_err_msg = err_msg)
 
 return(df_pairwisetests)
 }
+
 
 
 
