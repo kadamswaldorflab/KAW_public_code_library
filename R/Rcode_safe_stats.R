@@ -260,17 +260,18 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
   combined_final_results  <- bind_rows(final_results_list)
 
   # QA check for zero variance
-  combined_final_results$statistic <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
+  combined_final_results$zerovar  <- is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)
+  combined_final_results$statistic <- ifelse(combined_final_results$zerovar==TRUE
                                              , NA, combined_final_results$statistic)
-  combined_final_results$p <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
+  combined_final_results$p <- ifelse(combined_final_results$zerovar==TRUE
                                              , NA, combined_final_results$p)
-  combined_final_results$pstars <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
-                                             , NA, combined_final_results$pstars)
-  combined_final_results$test_status <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
+  combined_final_results$pstars <- ifelse(combined_final_results$zerovar==TRUE
+                                             , "", combined_final_results$pstars)
+  combined_final_results$test_status <- ifelse(combined_final_results$zerovar==TRUE
                                              , "FAIL", combined_final_results$test_status)
-  combined_final_results$err_msg <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
+  combined_final_results$err_msg <- ifelse(combined_final_results$zerovar==TRUE
                                              , "zero variance in 1 or more groups", combined_final_results$err_msg)
-
+ print("here1")
   # add the sig_result var
   combined_final_results  <- combined_final_results %>%  sig_result()
 
@@ -316,6 +317,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
