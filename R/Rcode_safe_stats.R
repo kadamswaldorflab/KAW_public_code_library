@@ -23,6 +23,10 @@ pstars  <- function(p, show_p_LT_point1 = F)
   return(stars)
 }
 
+is_na_or_zero  <- function(x1, x2) {
+  y <- ifelse(is.na(x1) | is.na(x2) | x1==0 | x2==0, T, F)
+  return(y)
+}
 
 # adds the "sig_result" variable which is populated when a result is p < .05 and 
 #  shows the direction of effect.  (E.g., when group 1 is greater than group 2, this fx returns "1>2") 
@@ -256,15 +260,15 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
   combined_final_results  <- bind_rows(final_results_list)
 
   # QA check for zero variance
-  combined_final_results$statistic <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+  combined_final_results$statistic <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , NA, combined_final_results$statistic)
-  combined_final_results$p <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+  combined_final_results$p <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , NA, combined_final_results$p)
-  combined_final_results$pstars <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+  combined_final_results$pstars <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , NA, combined_final_results$pstars)
-  combined_final_results$test_result <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+  combined_final_results$test_result <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , "FAIL", combined_final_results$test_result)
-  combined_final_results$err_msg <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+  combined_final_results$err_msg <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , "zero variance in 1 or more groups", combined_final_results$err_msg)
 
   # add the sig_result var
@@ -312,6 +316,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
