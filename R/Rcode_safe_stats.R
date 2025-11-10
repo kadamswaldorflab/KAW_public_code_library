@@ -266,8 +266,8 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
                                              , NA, combined_final_results$p)
   combined_final_results$pstars <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , NA, combined_final_results$pstars)
-  combined_final_results$test_result <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
-                                             , "FAIL", combined_final_results$test_result)
+  combined_final_results$test_status <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
+                                             , "FAIL", combined_final_results$test_status)
   combined_final_results$err_msg <- ifelse(is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)==TRUE
                                              , "zero variance in 1 or more groups", combined_final_results$err_msg)
 
@@ -316,6 +316,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
