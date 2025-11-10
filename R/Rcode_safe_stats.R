@@ -136,7 +136,7 @@ safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
 {
   df_descstats <- df %>% 
     filter(!is.na(.data[[x_var]])) %>% 
-    mutate(rank = rank(value)) %>%
+    mutate(rank = rank(.data[[x_var]])) %>%
     group_by(!!!syms(c( g_var, subset_vars))) %>% 
     summarize(  N = n()
               , M = round(mean(.data[[x_var]]), ndigits)
@@ -324,6 +324,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
