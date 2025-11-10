@@ -270,9 +270,9 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
                                              , "", combined_final_results$pstars)
   combined_final_results$test_status <- ifelse(combined_final_results$zerovar==TRUE
                                              , "FAIL", combined_final_results$test_status)
-  combined_final_results$err_msg <- ifelse(is.na(combined_final_results$sd1), "no obs. in 1+ groups",
-                     ifelse(is.na(combined_final_results$sd2), "no obs. in 1+ groups",
-              ifelse(combined_final_results$zerovar==TRUE, "zero variance in 1 or more groups", combined_final_results$err_msg)))
+  #combined_final_results$err_msg <- ifelse(is.na(combined_final_results$sd1), "no obs. in 1+ groups",
+  #                   ifelse(is.na(combined_final_results$sd2), "no obs. in 1+ groups",
+  #            ifelse(combined_final_results$zerovar==TRUE, "zero variance in 1 or more groups", combined_final_results$err_msg)))
  
   # add the sig_result var
   combined_final_results  <- combined_final_results %>%  sig_result()
@@ -322,6 +322,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
