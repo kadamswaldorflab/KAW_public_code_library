@@ -24,7 +24,8 @@ pstars  <- function(p, show_p_LT_point1 = F)
 }
 
 is_na_or_zero  <- function(x1, x2) {
-  y <- ifelse(is.na(x1) | is.na(x2) | x1==0 | x2==0, T, F)
+  #y <- ifelse(is.na(x1) | is.na(x2) | x1==0 | x2==0, T, F)
+  y <- ifelse( x1==0 | x2==0, T, F)
   return(y)
 }
 
@@ -317,6 +318,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
