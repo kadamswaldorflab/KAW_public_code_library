@@ -255,6 +255,18 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 
   combined_final_results  <- bind_rows(final_results_list)
 
+  # QA check for zero variance
+  combined_final_results$statistic <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+                                             , NA, combined_final_results$statistic)
+  combined_final_results$p <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+                                             , NA, combined_final_results$p)
+  combined_final_results$pstars <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+                                             , NA, combined_final_results$pstars)
+  combined_final_results$test_result <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+                                             , "FAIL", combined_final_results$test_result)
+  combined_final_results$err_msg <- ifelse(combined_final_results$sd1==0 | combined_final_results$sd2==0
+                                             , "zero variance in 1 or more groups", combined_final_results$err_msg)
+
   # add the sig_result var
   combined_final_results  <- combined_final_results %>%  sig_result()
 
@@ -283,7 +295,23 @@ safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3
 } 
 
 
+merge_safe_t_wilc  <- function(df_ttest, df_wilctest){
+df_pairwisetests  <- 
+  sqldf("select a.* 
+    , b.statistic as wilc_statistic
+    , b.p as wilc_p
+    , b.pstars as wilc_pstars
+    , b.sig_result as wilc_sig_result
+  from df_ttest a
+    join df_wilctest b 
+    ON  a.variable = b.variable
+    AND a.subsetpk = b.subsetpk
+    AND a.group1 = b.group1
+    AND a.group2 = b.group2") %>% 
+  rename(t_statitic = statistic, t_p = p, t_pstars = pstars)
 
+return(df_pairwisetests)
+}
 
 
 
