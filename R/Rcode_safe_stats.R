@@ -21,8 +21,18 @@ safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
               , MAX = round(max(.data[[x_var]]), ndigits)
               ) %>% ungroup() %>% 
     mutate(grpnum = as.numeric(.data[[g_var]]))
+
+  df_rank_sum <- df %>%
+     filter(!is.na(.data[[x_var]])) %>% 
+      group_by(!!!syms(c( subset_vars))) %>% 
+      mutate(rank = rank(.data[[x_var]])) %>%
+      ungroup() %>% 
+      group_by(!!!syms(c( g_var, subset_vars))) %>% 
+      summarize( SUM_RANKS = sum(rank)) %>% ungroup()
   
-  return(df_descstats)
+  df_final <- inner_join(df_descstats, df_rank_sum, by=c(g_var, subset_vars))
+
+  return(df_final)
 }
 
 
@@ -328,6 +338,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
