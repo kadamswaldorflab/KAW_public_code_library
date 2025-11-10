@@ -174,7 +174,10 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
     descstats  <- safe_descstats(df, x_var, g_var
                  , subset_vars, ndigits) %>% 
             mutate(grp = .data[[g_var]])
-  
+
+    if (k <= 2) {
+      print(descstats)  
+    }
     # create the subsets
     subsets <- df %>% distinct(across(all_of(subset_vars)))
     # sort the columns 
@@ -326,6 +329,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
