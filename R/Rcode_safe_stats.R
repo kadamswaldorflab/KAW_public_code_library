@@ -25,7 +25,7 @@ pstars  <- function(p, show_p_LT_point1 = F)
 
 is_na_or_zero  <- function(x1, x2) {
   #y <- ifelse(is.na(x1) | is.na(x2) | x1==0 | x2==0, T, F)
-  y <- ifelse( x1==0 | x2==0, T, F)
+  y <- ifelse(is.na(x1), T, ifelse(is.na(x2), T, ifelse( x1==0 | x2==0, T, F)))
   return(y)
 }
 
@@ -270,12 +270,16 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
                                              , "", combined_final_results$pstars)
   combined_final_results$test_status <- ifelse(combined_final_results$zerovar==TRUE
                                              , "FAIL", combined_final_results$test_status)
-  combined_final_results$err_msg <- ifelse(combined_final_results$zerovar==TRUE
-                                             , "zero variance in 1 or more groups", combined_final_results$err_msg)
- print("here1")
+  combined_final_results$err_msg <- ifelse(is.na(combined_final_results$sd1), "no obs. in 1+ groups",
+                     ifelse(is.na(combined_final_results$sd2), "no obs. in 1+ groups",
+              ifelse(combined_final_results$zerovar==TRUE, "zero variance in 1 or more groups", combined_final_results$err_msg)))
+ 
   # add the sig_result var
   combined_final_results  <- combined_final_results %>%  sig_result()
 
+  # drop the zerovar var
+  combined_final_results <- combined_final_results %>% select(-zerovar)
+  
   # print a table of significant results 
   sig_table  <- combined_final_results %>% 
     mutate(sig = paste0(test_status, coalesce(pstars,"_NS"))) %>% 
@@ -318,6 +322,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
