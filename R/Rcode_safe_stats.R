@@ -19,10 +19,9 @@ safe_descstats  <- function(df, x_var, g_var, subset_vars, ndigits)
               , M = round(mean(.data[[x_var]]), ndigits)
               , SD = round(sd(.data[[x_var]]), ndigits)
               , MAX = round(max(.data[[x_var]]), ndigits)
-              , SUM_RANKS = sum(rank)
               ) %>% ungroup() %>% 
     mutate(grpnum = as.numeric(.data[[g_var]]))
-
+  
   return(df_descstats)
 }
 
@@ -329,6 +328,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
