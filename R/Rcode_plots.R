@@ -36,6 +36,7 @@ plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
             , xlab, mytheme, mycolorscale
             , n_facet_rows = 1)
 {
+  cat("\n")
   # Count distinct variables reported in dfstats (assumes a column 'variable' exists)
   vars  <- dfstats %>% count(variable)
 
@@ -259,6 +260,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
