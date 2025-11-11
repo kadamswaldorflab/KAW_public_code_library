@@ -111,8 +111,9 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
     # Create a title string for the plot using the group value.
     mytitle  <- group_by_levs[i]
 
-    # Subset the data to the rows matching the current group level.
-    tmp <- df %>% filter(.data[[group_by]] == group_by_levs[i])
+    # Subset the data to the rows matching the current group level and there is no missing data
+    tmp <- df %>% filter(.data[[group_by]] == group_by_levs[i] & 
+                        !is.na(.data[[y_var]]))
 
     if (nrow(tmp) == 0) {
     # placeholder plot
@@ -274,6 +275,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
