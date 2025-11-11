@@ -164,9 +164,9 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
     # Create a human-readable label for each comparison: "g1 vs g2 <pstars>"
     tmp_sigstats$mylabel  <- 
-      ifelse(is.na(tmp_sigstats$sig_result), "", 
-      ifelse(tmp_sigstats$sig_result=="", "",
-        paste0(tmp_sigstats$sig_result, tmp_sigstats$pstars)))
+      ifelse(is.na(tmp_sigstats$t_sig_result), "", 
+      ifelse(tmp_sigstats$t_sig_result=="", "",
+        paste0(tmp_sigstats$t_sig_result, tmp_sigstats$t_pstars)))
 
     # Compute a central x position for the label by averaging the numeric group indices.
     # This is used to position the label between the two groups on the x-axis.
@@ -210,6 +210,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
