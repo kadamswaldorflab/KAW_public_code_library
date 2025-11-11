@@ -228,10 +228,8 @@ safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits
           
         if(testtype == "T-test") {
           result <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
-          result  <- result %>%  sig_result()
         } else if(testtype == "Wilcoxon") {
-          result <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
-                
+          result <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)                
         } 
         results[[g]] <- result
       }
@@ -337,6 +335,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
