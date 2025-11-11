@@ -114,9 +114,9 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
     # Subset the data to the rows matching the current group level and there is no missing data
     tmp <- df %>% filter(.data[[group_by]] == group_by_levs[i] & 
                         !is.na(.data[[y_var]]))
-
     if (nrow(tmp) == 0) {
     # placeholder plot
+      cat("0recs")
        p1  <- ggplot() +  annotate("text", x = 0.5, y = 0.5, 
         label = paste0("No data available for [", y_var, "] when ", group_by," = '", group_by_levs[i],"'" ), size = 4) +
         theme_void()
@@ -164,8 +164,9 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
    }
 
     # Store the created plot in the list.
-    plots1[[i]] <- p1
-    names(plots1)[i] <- mytitle
+    cat(mytitle)
+    plots1[[mytitle]] <- p1
+    # names(plots1)[i] <- mytitle
   }
 
   # Print a newline after the loop's progress output.
@@ -174,6 +175,8 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
   # Return the list of ggplot objects (one per group_by level).
   return(plots1)
 }
+
+
 
 
 # Define function facet_plots_1row_add_sig:
@@ -201,6 +204,11 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
   for(i in 1:length(plotlist))
   {
     mytitle <- names(plotlist)[i]
+    if(str_detect(mytitle, "no_data"))
+      {
+         outlist[[i]] <- plotlist[[i]]   
+         names(outlist)[i] <- mytitle
+      } else {
           
     # Extract the existing subtitle from the plot (if any).
     mysubtitle  <- plotlist[[i]]$labels[["subtitle"]]
@@ -275,6 +283,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
