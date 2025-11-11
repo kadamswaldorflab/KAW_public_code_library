@@ -265,6 +265,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
       # Append the annotated plot to the output list.
       outlist[[i]] <- pout
+      names(outlist)[i] <- mytitle
   }
 
   # Return the list of annotated ggplot objects.
@@ -273,6 +274,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
