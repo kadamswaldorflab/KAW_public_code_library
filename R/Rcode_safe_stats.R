@@ -181,7 +181,7 @@ safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits
   for(k in 1:length(x_vars)) 
   {
     x_var  <- x_vars[k]
-    cat("\n . . . (", k,") . . . ", x_var, " . . . \n")
+    cat("\n . . . (", k,") . . . ", testtype, " . . . ", x_var, " . . . \n")
     # get the descriptive stats
     descstats  <- safe_descstats(df, x_var, g_var
                  , subset_vars, ndigits) %>% 
@@ -337,6 +337,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
