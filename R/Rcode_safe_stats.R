@@ -229,16 +229,16 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
           
         if(testtype == "T-test") {
           result <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
+          result  <- result %>%  sig_result()
         } else if(testtype == "Wilcox") {
           result <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
+          result  <- result %>%  sig_result()          
         } else if(testtype == "both") {
           result_t <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
           result_w <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
-          print(result_t)
-          print(result_w)
-          
+          result_t  <- result_t %>%  sig_result()
+          result_w  <- result_w %>%  sig_result()
           result <- merge_safe_t_wilc(result_t, result_w)
-            
         }
         
         results[[g]] <- result
@@ -290,8 +290,6 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
                      ifelse(is.na(combined_final_results$sd2), "no obs. in 1+ groups",
               ifelse(combined_final_results$zerovar==TRUE, "zero variance in 1 or more groups", combined_final_results$err_msg)))
  
-  # add the sig_result var
-  combined_final_results  <- combined_final_results %>%  sig_result()
 
   # drop the zerovar var
   combined_final_results <- combined_final_results %>% select(-zerovar)
@@ -338,6 +336,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
