@@ -20,6 +20,33 @@ cat("\n# facet_plots_1row_add_sig ")
 cat("\n")
 
 
+plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
+            , x_var, color_var
+            , xlab, mytheme, mycolorscale
+            , n_facet_rows = 1)
+{
+  vars  <- dfstats %>% count(variable)
+  plot_list_by_var  <- list()
+  for(i in 1:nrow(vars))
+  {
+    my_y_var <- vars$variable[i]
+    
+    cat("# Plotting: ", my_y_var, " . . . \n")
+    p  <- facet_plots_1row(df, dfstats, group_by, facet_by
+            , x_var, my_y_var, color_var
+            , xlab, my_y_var, mytheme, mycolorscale
+            , n_facet_rows)
+    
+    psig <- facet_plots_1row_add_sig(p, 
+      dfstats %>% filter(variable == my_y_var))
+    
+    plot_list_by_var[[my_y_var]] <- psig
+  }
+
+  return(plot_list_by_var)
+}
+
+
 # Define function facet_plots_1row:
 # - df: input data.frame / tibble
 # - group_by: column name (string) used to create separate plots (one plot per level)
@@ -29,7 +56,7 @@ cat("\n")
 # - mytheme: function returning a ggplot2 theme (callable)
 # - n_facet_rows: number of rows to use in facet_wrap (default 1)
 facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, color_var
-                             , xlab, ylab, mytheme, n_facet_rows = 1)
+                             , xlab, ylab, mytheme, mycolorscale, n_facet_rows = 1)
 {
   # Check whether a "value_source" column exists in the data frame 'df'
   # NOTE: this line refers to 'cyt' which is not defined inside this function.
@@ -68,7 +95,8 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
     # Build the ggplot for this subset:
     p1 <- ggplot(tmp)+
       # Manually define the colors used for the color aesthetic.
-      scale_color_manual(values = c("blue","darkred","red"))+
+      #scale_color_manual(values = c("blue","darkred","red"))+
+      mycolorscale +
       # Manually set the shapes used for the shape aesthetic.
       scale_shape_manual(values=c("estim" = 4, "measured" = 19))+
       # Add summary statistics as "pointrange": mean +/- 1 SD (mean_sdl with mult=1).
@@ -210,6 +238,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
