@@ -116,9 +116,10 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
 
     if (nrow(tmp) == 0) {
     # placeholder plot
-    p1 <- ggplot() + 
-      annotate("text", x = 0.5, y = 0.5, label = "No data available", size = 4) +
-      theme_void()
+       p1  <- ggplot() +  annotate("text", x = 0.5, y = 0.5, 
+        label = paste0("No data available for [", y_var, "] when ", group_by," = '", group_by_levs[i],"'" ), size = 4) +
+        theme_void()
+
     } else {
                           
     # Build the ggplot for this subset:
@@ -268,6 +269,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
