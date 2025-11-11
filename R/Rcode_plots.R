@@ -119,7 +119,8 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
        p1  <- ggplot() +  annotate("text", x = 0.5, y = 0.5, 
         label = paste0("No data available for [", y_var, "] when ", group_by," = '", group_by_levs[i],"'" ), size = 4) +
         theme_void()
-
+        
+        mytitle <- paste0(mytitle, "_no_data")
     } else {
                           
     # Build the ggplot for this subset:
@@ -163,6 +164,7 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
 
     # Store the created plot in the list.
     plots1[[i]] <- p1
+    names(plots1)[i] <- mytitle
   }
 
   # Print a newline after the loop's progress output.
@@ -197,6 +199,8 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
   # Loop over each plot in the provided list.
   for(i in 1:length(plotlist))
   {
+    mytitle <- names(plotlist)[i]
+          
     # Extract the existing subtitle from the plot (if any).
     mysubtitle  <- plotlist[[i]]$labels[["subtitle"]]
 
@@ -269,6 +273,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
