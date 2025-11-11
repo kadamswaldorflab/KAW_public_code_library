@@ -31,16 +31,20 @@ cat("\n")
 facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
                              , xlab, ylab, mytheme, n_facet_rows = 1)
 {
-  # Check whether a "value_source" column exists in an object named 'cyt'
+  # Check whether a "value_source" column exists in the data frame 'df'
   # NOTE: this line refers to 'cyt' which is not defined inside this function.
   # That means this will error unless 'cyt' exists in the parent environment.
   # The intent appears to be to detect if the data contains a 'value_source' column.
-  has_value_source  <- ifelse("value_source" %in% names(cyt), T, F)
+  has_value_source  <- ifelse("value_source" %in% names(df), T, F)
 
   # If 'value_source' exists, collapse any entries containing "estim" to the string "estim".
   # This standardizes different estimator labels into one "estim" category.
   if(has_value_source) {
     df$value_source <- ifelse(str_detect(df$value_source, "estim"), "estim", df$value_source)
+    show_shape_legend <- TRUE
+  } else {
+    df$value_source  <- "measured"
+    show_shape_legend <- FALSE
   }
 
   # Get the unique levels (values) of the grouping variable so we can build one plot per level.
@@ -66,7 +70,7 @@ facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
       # Manually define the colors used for the color aesthetic.
       scale_color_manual(values = c("blue","darkred","red"))+
       # Manually set the shapes used for the shape aesthetic.
-      scale_shape_manual(values=c(4,19))+
+      scale_shape_manual(values=c("estim" = 4, "measured" = 19))+
       # Add summary statistics as "pointrange": mean +/- 1 SD (mean_sdl with mult=1).
       # - geom: pointrange
       # - fun.data = "mean_sdl": compute mean and sd
@@ -92,6 +96,8 @@ facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
       # Add title and subtitle; title includes the group_by variable name and its value.
       labs(title=paste0(group_by,"=",mytitle)
            , subtitle="")+
+      # show the shape legend conditionally
+      guides(shape = if (show_shape_legend) guide_legend() else "none")+
       # Apply the user-provided theme function. Note that mytheme is expected to be a function
       # that returns a ggplot2 theme (e.g., function() theme_minimal()).
       mytheme()
@@ -110,7 +116,7 @@ facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
 
 # Define function facet_plots_1row_add_sig:
 # - plotlist: list of ggplot objects (expected format produced by facet_plots_1row)
-# - sigstats: a data.frame/tibble produced by safe_pairwise_t_tests or safe_pairwise_wilcox_tests
+# - sigstats: a data.frame/tibble produced by safe_pairwise_tests 
 #   which contains pairwise comparison statistics (p-values, group indices, max y-values, etc.)
 facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 {
@@ -204,4 +210,5 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
