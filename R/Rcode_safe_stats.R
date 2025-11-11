@@ -245,11 +245,8 @@ safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits
     # drop the final subsetpk var
     final_results  <- final_results %>% select(-subsetpk1)
 
-    final_results  <- final_results %>%  sig_result()    
-    
     final_results <- final_results %>% relocate(pstars, .after = p)
-  
-    
+      
     join_1  <- paste0("a.", subset_vars, "=b1.", subset_vars , collapse=" and ")
     join_2  <- paste0("a.", subset_vars, "=b2.", subset_vars , collapse=" and ")
     
@@ -266,6 +263,8 @@ safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits
   }
 
   combined_final_results  <- bind_rows(final_results_list)
+
+  combined_final_results  <- combined_final_results %>%  sig_result()      
 
   # QA check for zero variance
   combined_final_results$zerovar  <- is_na_or_zero(combined_final_results$sd1, combined_final_results$sd2)
@@ -335,6 +334,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
