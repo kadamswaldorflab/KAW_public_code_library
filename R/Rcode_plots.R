@@ -20,26 +20,47 @@ cat("\n# facet_plots_1row_add_sig ")
 cat("\n")
 
 
+# plot_pairwise_tests: convenience wrapper that builds plots for each variable found in dfstats.
+# - df: main data frame containing raw/processed observations
+# - dfstats: data frame containing summary / pairwise test results (used to annotate plots)
+# - group_by: string name of column to split plots by (one plot per group level)
+# - facet_by: string name of column used as facet variable inside each plot (facet_wrap)
+# - x_var: string name of column to use on the x-axis
+# - color_var: string name of column to map to color
+# - xlab: label for x-axis
+# - mytheme: a callable that returns a ggplot2 theme (e.g. function() theme_minimal())
+# - mycolorscale: a ggplot2 scale (e.g. scale_color_manual(...)) or expression
+# - n_facet_rows: number of rows to use in facet_wrap (default 1)
 plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
             , x_var, color_var
             , xlab, mytheme, mycolorscale
             , n_facet_rows = 1)
 {
+  # Count distinct variables reported in dfstats (assumes a column 'variable' exists)
   vars  <- dfstats %>% count(variable)
+
+  # Initialize a named list to hold final annotated plots (one list element per variable)
   plot_list_by_var  <- list()
+
   for(i in 1:nrow(vars))
   {
     my_y_var <- vars$variable[i]
-    
+
     cat("# Plotting: ", my_y_var, " . . . \n")
+
+    # Build base plot(s) for this y-variable. facet_plots_1row returns a list of plots,
+    # one for each level of the 'group_by' variable.
     p  <- facet_plots_1row(df, dfstats, group_by, facet_by
             , x_var, my_y_var, color_var
             , xlab, my_y_var, mytheme, mycolorscale
             , n_facet_rows)
-    
+
+    # Add significance annotations using the subset of dfstats for this variable.
+    # facet_plots_1row_add_sig expects the plot list and the sigstats corresponding to the variable.
     psig <- facet_plots_1row_add_sig(p, 
       dfstats %>% filter(variable == my_y_var))
-    
+
+    # Store annotated plots keyed by variable name
     plot_list_by_var[[my_y_var]] <- psig
   }
 
@@ -238,6 +259,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
