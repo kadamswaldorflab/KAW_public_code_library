@@ -114,6 +114,13 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
     # Subset the data to the rows matching the current group level.
     tmp <- df %>% filter(.data[[group_by]] == group_by_levs[i])
 
+    if (nrow(tmp) == 0) {
+    # placeholder plot
+    p1 <- ggplot() + 
+      annotate("text", x = 0.5, y = 0.5, label = "No data available", size = 4) +
+      theme_void()
+    } else {
+                          
     # Build the ggplot for this subset:
     p1 <- ggplot(tmp)+
       # Manually define the colors used for the color aesthetic.
@@ -151,6 +158,7 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
       # Apply the user-provided theme function. Note that mytheme is expected to be a function
       # that returns a ggplot2 theme (e.g., function() theme_minimal()).
       mytheme()
+   }
 
     # Store the created plot in the list.
     plots1[[i]] <- p1
@@ -260,6 +268,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
