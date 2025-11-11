@@ -239,6 +239,11 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
           result <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
         } else if(testtype == "Wilcox") {
           result <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
+        } else if(testtype == "both") {
+          result_t <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
+          result_w <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
+          print(result_t)
+          print(result_w)
         }
         
         results[[g]] <- result
@@ -251,8 +256,8 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
     final_results  <- sqldf("select *
                             from subsets a
                             join final_results b ON a.subsetpk = b.subsetpk1")
+
     # drop the final subsetpk var
-    
     final_results  <- final_results %>% select(-subsetpk1)
     
     final_results$pstars <- pstars(final_results$p, show_p_LT_point1)
@@ -338,6 +343,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
