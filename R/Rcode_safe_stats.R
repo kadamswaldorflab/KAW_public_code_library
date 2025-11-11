@@ -154,15 +154,6 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
   )
 }
 
-# df  <- flo
-# x_var = "frqlive"
-# g_var="grp3"
-# subset_vars =  c("smpltyp","pop")
-# testtype = "Wilcox"
-# ndigits = 3
-# show_p_LT_point1 = F
-
-
 
 safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
 {
@@ -334,24 +325,4 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
