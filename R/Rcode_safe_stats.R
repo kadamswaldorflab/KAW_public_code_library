@@ -300,7 +300,7 @@ safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits
 }
 
 
-safe_pairwise_ests <- function(df, x_vars, g_var, subset_vars, testtype="both", ndigits=3, show_p_LT_point1=F) {
+safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype="both", ndigits=3, show_p_LT_point1=F) {
 
   if(testtype!="both" & testtype!="T-test" & testtype!="Wilcoxon")
     {
@@ -309,13 +309,13 @@ safe_pairwise_ests <- function(df, x_vars, g_var, subset_vars, testtype="both", 
     }
   
   if(testtype=="both") {
-    result_t <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
-    result_w <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
+    result_t <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+    result_w <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
     result  <- merge_safe_t_wilc(result_t, result_w)
     } else if(testtype=="T-test") {
-    result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+    result <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
   } else if(testtype=="Wilcoxon") {
-    result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
+    result <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
   }
   return(result)
 } 
@@ -337,6 +337,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
