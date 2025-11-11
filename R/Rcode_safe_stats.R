@@ -164,7 +164,7 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
 
 
 
-safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
+safe_pairwise_test <- function(df, x_vars, g_var, subset_vars, testtype, ndigits, show_p_LT_point1)
 {
   # check that g_var is a factor
   is_factor <- class(df[[g_var]])
@@ -229,17 +229,10 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
         if(testtype == "T-test") {
           result <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
           result  <- result %>%  sig_result()
-        } else if(testtype == "Wilcox") {
+        } else if(testtype == "Wilcoxon") {
           result <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
-          result  <- result %>%  sig_result()          
-        } else if(testtype == "both") {
-          result_t <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
-          result_w <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
-          result_t  <- result_t %>%  sig_result()
-          result_w  <- result_w %>%  sig_result()
-          result <- merge_safe_t_wilc(result_t, result_w)
-        }
-        
+                
+        } 
         results[[g]] <- result
       }
       resultset <- bind_rows(results) %>% mutate(subsetpk1 = i)
@@ -253,9 +246,10 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 
     # drop the final subsetpk var
     final_results  <- final_results %>% select(-subsetpk1)
+
+    final_results  <- final_results %>%  sig_result()    
     
-    #final_results <- final_results %>% relocate(t_pstars, .after = t_p)
-    #final_results <- final_results %>% relocate(t_pstars, .after = t_p)
+    final_results <- final_results %>% relocate(pstars, .after = p)
   
     
     join_1  <- paste0("a.", subset_vars, "=b1.", subset_vars , collapse=" and ")
@@ -306,17 +300,25 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
 }
 
 
+safe_pairwise_ests <- function(df, x_vars, g_var, subset_vars, testtype="both", ndigits=3, show_p_LT_point1=F) {
 
-safe_pairwise_t_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
-  result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+  if(testtype!="both" & testtype!="T-test" & testtype!="Wilcoxon")
+    {
+       cat(paste0("\n'testtype' parameter must be one of the following: \"T-Test\", \"Wilcoxon\", \"both\". Please try again.\n"))
+       return()
+    }
+  
+  if(testtype=="both") {
+    result_t <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+    result_w <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
+    result  <- merge_safe_t_wilc(result_t, result_w)
+    } else if(testtype=="T-test") {
+    result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
+  } else if(testtype=="Wilcoxon") {
+    result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
+  }
   return(result)
 } 
-
-safe_pairwise_wilcox_tests <- function(df, x_vars, g_var, subset_vars, ndigits=3, show_p_LT_point1=F) {
-  result <- safe_pairwise_tests(df, x_vars, g_var, subset_vars, "Wilcox", ndigits, show_p_LT_point1)
-  return(result)
-} 
-
 
 merge_safe_t_wilc  <- function(df_ttest, df_wilctest){
 df_pairwisetests  <- 
@@ -328,12 +330,14 @@ df_pairwisetests  <-
   from df_ttest a
     join df_wilctest b 
     ON  a.variable = b.variable
+    AND a.subsetpk = b.subsetpk
     AND a.group1 = b.group1
     AND a.group2 = b.group2") %>% 
   rename(t_statitic = statistic, t_p = p, t_pstars = pstars, t_sig_result = sig_result)
 
 return(df_pairwisetests)
 }
+
 
 
 
