@@ -329,13 +329,13 @@ df_pairwisetests  <-
   from df_ttest a
     join df_wilctest b 
     ON  a.variable = b.variable
-    AND a.subsetpk = b.subsetpk
     AND a.group1 = b.group1
     AND a.group2 = b.group2") %>% 
   rename(t_statitic = statistic, t_p = p, t_pstars = pstars, t_sig_result = sig_result)
 
 return(df_pairwisetests)
 }
+
 
 
 
