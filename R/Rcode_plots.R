@@ -28,7 +28,7 @@ cat("\n")
 # - xlab, ylab: axis labels (strings)
 # - mytheme: function returning a ggplot2 theme (callable)
 # - n_facet_rows: number of rows to use in facet_wrap (default 1)
-facet_plots_1row <- function(df, group_by, facet_by, x_var, y_var, color_var
+facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, color_var
                              , xlab, ylab, mytheme, n_facet_rows = 1)
 {
   # Check whether a "value_source" column exists in the data frame 'df'
@@ -210,5 +210,6 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
