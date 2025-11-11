@@ -210,72 +210,73 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
          names(outlist)[i] <- mytitle
       } else {
           
-    # Extract the existing subtitle from the plot (if any).
-    mysubtitle  <- plotlist[[i]]$labels[["subtitle"]]
-
-    # Extract the title that contains something like "group_by=group_value"
-    grpby_var_val  <- plotlist[[i]]$labels[["title"]]
-
-    # Derive the group_by variable name by splitting the title at "=" and taking the left part.
-    grpby_var <- str_split(grpby_var_val, "=")[[1]][1]
-
-    # Derive the group_by value (the specific level) by splitting the title at "=" and taking the right part.
-    grpby_val <- str_split(grpby_var_val, "=")[[1]][2]
-
-    # Extract the y-axis variable name used in the plot (from the plot labels)
-    y_var  <- plotlist[[i]]$labels[["y"]]
-
-    # Extract the method (stat test) from the first row of sigstats (assumes consistent method)
-    method  <- sigstats$method[1]
-
-    # Filter the sigstats table to only the comparisons relevant to the current group-by level
-    # and the current y variable. This assumes sigstats contains a column with the group_by name.
-    tmp_sigstats <- sigstats %>% 
-      filter(.data[[grpby_var]] == grpby_val & 
-               variable == y_var)
-
-    # Create a human-readable label for each comparison: "g1 vs g2 <pstars>"
-    tmp_sigstats$mylabel  <- 
-      ifelse(is.na(tmp_sigstats$t_sig_result), "", 
-      ifelse(tmp_sigstats$t_sig_result=="", "",
-        paste0(tmp_sigstats$t_sig_result, tmp_sigstats$t_pstars)))
-
-    # Compute a central x position for the label by averaging the numeric group indices.
-    # This is used to position the label between the two groups on the x-axis.
-    tmp_sigstats$grpsnum  <- (tmp_sigstats$g1_num + tmp_sigstats$g2_num)/2.0
-
-    # Compute a y position slightly above the observed maximum y for the comparison:
-    # - mylabel_y is max_y multiplied by (1 + (grpsnum / 10))
-    #   This nudges labels higher when comparing groups with higher numeric positions.
-    tmp_sigstats$mylabel_y  <- tmp_sigstats$max_y  *
-        (1+(tmp_sigstats$grpsnum  / 10))   # e.g., 15%, 20%, or 25% up depending on grpsnum
-
-    # Compute an even higher value that will be used with geom_blank to ensure plot limits
-    # include enough space for the label. This is a safety margin (30% more).
-    tmp_sigstats$mylabel_maxy <- tmp_sigstats$mylabel_y * 1.3 # 30% up
-
-    # Optionally print the tmp_sigstats for debugging (commented out in original).
-    # print(tmp_sigstats)
-
-    # Add annotations to the plot for comparisons where p < 0.05:
-    pout  <- plotlist[[i]] + 
-      # geom_blank with y = mylabel_maxy ensures the plot's y-limits stretch high enough
-      # to accommodate labels; we only add blank data for significant comparisons.
-      geom_blank(data = tmp_sigstats %>% filter(t_p < .05) 
-                 , aes(y = mylabel_maxy) ) +
-    # Add a semi-transparent label for each significant pairwise comparison:
-    geom_label(data = tmp_sigstats %>% filter(t_p < .05) 
-        , aes(x=grpsnum, y = mylabel_y, label= mylabel)
-         # , direction = "x", min.segment.length = 5
-        , vjust=0.5, color="black", size=sigtxtsz ,alpha=.5) + 
-      # Update the subtitle to indicate that pairwise significant comparisons are displayed
-      labs(subtitle = paste(mysubtitle, 
-          " (significant pairwise ", method, "displayed)"))
-
-      # Append the annotated plot to the output list.
-      outlist[[i]] <- pout
-      names(outlist)[i] <- mytitle
-  }
+                # Extract the existing subtitle from the plot (if any).
+                mysubtitle  <- plotlist[[i]]$labels[["subtitle"]]
+            
+                # Extract the title that contains something like "group_by=group_value"
+                grpby_var_val  <- plotlist[[i]]$labels[["title"]]
+            
+                # Derive the group_by variable name by splitting the title at "=" and taking the left part.
+                grpby_var <- str_split(grpby_var_val, "=")[[1]][1]
+            
+                # Derive the group_by value (the specific level) by splitting the title at "=" and taking the right part.
+                grpby_val <- str_split(grpby_var_val, "=")[[1]][2]
+            
+                # Extract the y-axis variable name used in the plot (from the plot labels)
+                y_var  <- plotlist[[i]]$labels[["y"]]
+            
+                # Extract the method (stat test) from the first row of sigstats (assumes consistent method)
+                method  <- sigstats$method[1]
+            
+                # Filter the sigstats table to only the comparisons relevant to the current group-by level
+                # and the current y variable. This assumes sigstats contains a column with the group_by name.
+                tmp_sigstats <- sigstats %>% 
+                  filter(.data[[grpby_var]] == grpby_val & 
+                           variable == y_var)
+            
+                # Create a human-readable label for each comparison: "g1 vs g2 <pstars>"
+                tmp_sigstats$mylabel  <- 
+                  ifelse(is.na(tmp_sigstats$t_sig_result), "", 
+                  ifelse(tmp_sigstats$t_sig_result=="", "",
+                    paste0(tmp_sigstats$t_sig_result, tmp_sigstats$t_pstars)))
+            
+                # Compute a central x position for the label by averaging the numeric group indices.
+                # This is used to position the label between the two groups on the x-axis.
+                tmp_sigstats$grpsnum  <- (tmp_sigstats$g1_num + tmp_sigstats$g2_num)/2.0
+            
+                # Compute a y position slightly above the observed maximum y for the comparison:
+                # - mylabel_y is max_y multiplied by (1 + (grpsnum / 10))
+                #   This nudges labels higher when comparing groups with higher numeric positions.
+                tmp_sigstats$mylabel_y  <- tmp_sigstats$max_y  *
+                    (1+(tmp_sigstats$grpsnum  / 10))   # e.g., 15%, 20%, or 25% up depending on grpsnum
+            
+                # Compute an even higher value that will be used with geom_blank to ensure plot limits
+                # include enough space for the label. This is a safety margin (30% more).
+                tmp_sigstats$mylabel_maxy <- tmp_sigstats$mylabel_y * 1.3 # 30% up
+            
+                # Optionally print the tmp_sigstats for debugging (commented out in original).
+                # print(tmp_sigstats)
+            
+                # Add annotations to the plot for comparisons where p < 0.05:
+                pout  <- plotlist[[i]] + 
+                  # geom_blank with y = mylabel_maxy ensures the plot's y-limits stretch high enough
+                  # to accommodate labels; we only add blank data for significant comparisons.
+                  geom_blank(data = tmp_sigstats %>% filter(t_p < .05) 
+                             , aes(y = mylabel_maxy) ) +
+                # Add a semi-transparent label for each significant pairwise comparison:
+                geom_label(data = tmp_sigstats %>% filter(t_p < .05) 
+                    , aes(x=grpsnum, y = mylabel_y, label= mylabel)
+                     # , direction = "x", min.segment.length = 5
+                    , vjust=0.5, color="black", size=sigtxtsz ,alpha=.5) + 
+                  # Update the subtitle to indicate that pairwise significant comparisons are displayed
+                  labs(subtitle = paste(mysubtitle, 
+                      " (significant pairwise ", method, "displayed)"))
+            
+                  # Append the annotated plot to the output list.
+                  outlist[[i]] <- pout
+                  names(outlist)[i] <- mytitle
+              }
+      }
 
   # Return the list of annotated ggplot objects.
     return(outlist)
@@ -283,6 +284,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
