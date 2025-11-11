@@ -83,7 +83,8 @@ safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
                 mutate(estimate = round(estimate, ndigits)
               , statistic = round(statistic, 2)
               , conf.low = round(conf.low, ndigits)
-              , conf.high = round(conf.high, ndigits)) %>% 
+              , conf.high = round(conf.high, ndigits)
+              , pstars = pstars(p)) %>% 
         rename(variable = .y.) %>%
       select(-c(n1, n2))
     },
@@ -96,6 +97,7 @@ safe_wilcox_test <- function(data, x_var, g_var, g1, g2, ndigits) {
         group2 = g2,
         statistic = NA,
         p = NA,
+        pstars=NA,
         conf.low = NA,
         conf.high = NA,
         method = "Wilcoxon",
@@ -126,7 +128,8 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
                , df = round(df, 2)
                , statistic = round(statistic, 2)
                , conf.low = round(conf.low, ndigits)
-               , conf.high = round(conf.high, ndigits)) %>% 
+               , conf.high = round(conf.high, ndigits)
+               , pstars = pstars(p)) %>% 
         rename(variable = .y.)
       
     },
@@ -141,6 +144,7 @@ safe_t_test <- function(data, x_var, g_var, g1, g2, ndigits) {
         group2 = g2,
         statistic = NA,
         p = NA,
+        pstars = NA,
         conf.low = NA,
         conf.high = NA,
         method = "T-test",
@@ -184,9 +188,6 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
                  , subset_vars, ndigits) %>% 
             mutate(grp = .data[[g_var]])
 
-    if (k <= 2) {
-      print(descstats)  
-    }
     # create the subsets
     subsets <- df %>% distinct(across(all_of(subset_vars)))
     # sort the columns 
@@ -218,23 +219,14 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
       results <- list()
       for(g in 1:length(group_pairs))
       {
-        # g <- 3
         g1 <-  group_pairs[[g]][1]
         g2 <-  group_pairs[[g]][2]
         
-        # cat(paste("pre:",dim(tmp)))
-        # filter: only group1 and group2, remove NA values of x_var
         tmppair  <- tmp %>% filter(.data[[g_var]] %in% group_pairs[[g]] & 
                                  !is.na(.data[[x_var]]))
-        # cat(paste("  post:",dim(tmppair)), "\n")
         
-        # drop unused levels 
         tmppair[ , g_var] <- droplevels(tmppair[ , g_var])
-  
-        # formula_obj <- reformulate(g_var, response = x_var)
-        # formula_str <- as.formula(paste(x_var, "~", g_var))
-        
-        # print(paste(g1, g2))
+          
         if(testtype == "T-test") {
           result <- safe_t_test(tmppair, x_var, g_var, g1, g2, ndigits)
         } else if(testtype == "Wilcox") {
@@ -244,6 +236,9 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
           result_w <- safe_wilcox_test(tmppair, x_var, g_var, g1, g2, ndigits)
           print(result_t)
           print(result_w)
+          
+          result <- merge_safe_t_wilc(result_t, result_w)
+            
         }
         
         results[[g]] <- result
@@ -260,10 +255,10 @@ safe_pairwise_tests <- function(df, x_vars, g_var, subset_vars, testtype, ndigit
     # drop the final subsetpk var
     final_results  <- final_results %>% select(-subsetpk1)
     
-    final_results$pstars <- pstars(final_results$p, show_p_LT_point1)
-    
-    final_results <- final_results %>% relocate(pstars, .after = p)
+    #final_results <- final_results %>% relocate(t_pstars, .after = t_p)
+    #final_results <- final_results %>% relocate(t_pstars, .after = t_p)
   
+    
     join_1  <- paste0("a.", subset_vars, "=b1.", subset_vars , collapse=" and ")
     join_2  <- paste0("a.", subset_vars, "=b2.", subset_vars , collapse=" and ")
     
@@ -343,6 +338,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
