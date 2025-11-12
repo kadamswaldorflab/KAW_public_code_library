@@ -183,7 +183,7 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
 # - plotlist: list of ggplot objects (expected format produced by facet_plots_1row)
 # - sigstats: a data.frame/tibble produced by safe_pairwise_tests 
 #   which contains pairwise comparison statistics (p-values, group indices, max y-values, etc.)
-facet_plots_1row_add_sig  <- function(plotlist, sigstats)
+facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 {
   # The sigstats input is expected to be a data.frame with columns such as:
   # - method: name of the statistical test
@@ -224,21 +224,22 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
             
                 # Extract the y-axis variable name used in the plot (from the plot labels)
                 y_var  <- plotlist[[i]]$labels[["y"]]
-            
-                # Extract the method (stat test) from the first row of sigstats (assumes consistent method)
-                method  <- sigstats$method[1]
-            
+                        
                 # Filter the sigstats table to only the comparisons relevant to the current group-by level
                 # and the current y variable. This assumes sigstats contains a column with the group_by name.
                 tmp_sigstats <- sigstats %>% 
                   filter(.data[[grpby_var]] == grpby_val & 
-                           variable == y_var)
-            
+                           variable == y_var &
+                           method == mymethod)
+
+                # Extract the method (stat test) from the first row of sigstats (assumes consistent method)
+                method  <- sigstats$method[1]
+
                 # Create a human-readable label for each comparison: "g1 vs g2 <pstars>"
                 tmp_sigstats$mylabel  <- 
-                  ifelse(is.na(tmp_sigstats$t_sig_result), "", 
-                  ifelse(tmp_sigstats$t_sig_result=="", "",
-                    paste0(tmp_sigstats$t_sig_result, tmp_sigstats$t_pstars)))
+                  ifelse(is.na(tmp_sigstats$sig_result), "", 
+                  ifelse(tmp_sigstats$sig_result=="", "",
+                    paste0(tmp_sigstats$sig_result, tmp_sigstats$pstars)))
             
                 # Compute a central x position for the label by averaging the numeric group indices.
                 # This is used to position the label between the two groups on the x-axis.
@@ -261,10 +262,10 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
                 pout  <- plotlist[[i]] + 
                   # geom_blank with y = mylabel_maxy ensures the plot's y-limits stretch high enough
                   # to accommodate labels; we only add blank data for significant comparisons.
-                  geom_blank(data = tmp_sigstats %>% filter(t_p < .05) 
+                  geom_blank(data = tmp_sigstats %>% filter(p < .05) 
                              , aes(y = mylabel_maxy) ) +
                 # Add a semi-transparent label for each significant pairwise comparison:
-                geom_label(data = tmp_sigstats %>% filter(t_p < .05) 
+                geom_label(data = tmp_sigstats %>% filter(p < .05) 
                     , aes(x=grpsnum, y = mylabel_y, label= mylabel)
                      # , direction = "x", min.segment.length = 5
                     , vjust=0.5, color="black", size=sigtxtsz ,alpha=.5) + 
@@ -284,6 +285,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats)
 
 
 # End of file
+
 
 
 
