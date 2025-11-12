@@ -34,7 +34,8 @@ cat("\n")
 plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
             , x_var, color_var
             , xlab, mytheme, mycolorscale
-            , n_facet_rows = 1)
+            , n_facet_rows = 1
+            , add_sig = F)
 {
   cat("\n")
   # Count distinct variables reported in dfstats (assumes a column 'variable' exists)
@@ -56,6 +57,7 @@ plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
             , xlab, my_y_var, mytheme, mycolorscale
             , n_facet_rows)
 
+    if(add_sig==T) {
     # Add significance annotations using the subset of dfstats for this variable.
     # facet_plots_1row_add_sig expects the plot list and the sigstats corresponding to the variable.
     psig <- facet_plots_1row_add_sig(p, 
@@ -63,6 +65,9 @@ plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
 
     # Store annotated plots keyed by variable name
     plot_list_by_var[[my_y_var]] <- psig
+    } else {
+       plot_list_by_var[[my_y_var]] <- p
+    }
   }
 
   return(plot_list_by_var)
@@ -285,6 +290,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
