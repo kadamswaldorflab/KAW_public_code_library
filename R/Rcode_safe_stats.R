@@ -311,6 +311,8 @@ safe_pairwise_tests  <- function(df, x_vars, g_var
   } else if(testtype=="Wilcoxon") {
     result <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
   }
+  cat("\n . . Output format: ", format_stacked_or_wide, "\n")
+
   return(result)
 }
 
@@ -336,5 +338,6 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
