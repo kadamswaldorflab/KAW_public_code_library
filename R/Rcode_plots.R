@@ -73,7 +73,6 @@ plot_pairwise_tests  <- function(df, dfstats, group_by, facet_by
   return(plot_list_by_var)
 }
 
-
 # Define function facet_plots_1row:
 # - df: input data.frame / tibble
 # - group_by: column name (string) used to create separate plots (one plot per level)
@@ -290,6 +289,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
