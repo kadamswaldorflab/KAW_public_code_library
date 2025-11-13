@@ -175,8 +175,13 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
   # Print a newline after the loop's progress output.
   cat("\n")
 
-  # Return the list of ggplot objects (one per group_by level).
-  return(plots1)
+  # Return the list of ggplot objects (one per group_by level)
+  #  and the list of params
+             
+  return(list("plots" = plots1, "params" = list("group_by" = group_by
+                                                , "facet_by" = facet_by
+                                                , "x_var" = x_var
+                                                , "y_var" = y_var))
 }
 
 
@@ -288,6 +293,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
