@@ -316,7 +316,7 @@ safe_pairwise_tests  <- function(df, x_vars, g_var
     out  <- list("stats" = result
                  , "params" = list("x_vars" = x_vars
                                    , "g_var" = g_var
-                                   , "g_var_levels" = group_levels
+                                   , "g_var_levels" = unique(df[ , g_var])
                                    , "subset_vars" = subset_vars))
     
   return(out)
@@ -344,6 +344,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
