@@ -168,7 +168,6 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
    }
 
     # Store the created plot in the list.
-    cat(mytitle)
     plots1[[mytitle]] <- p1
     # names(plots1)[i] <- mytitle
   }
@@ -289,6 +288,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
