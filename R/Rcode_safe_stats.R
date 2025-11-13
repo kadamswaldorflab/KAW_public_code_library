@@ -313,7 +313,12 @@ safe_pairwise_tests  <- function(df, x_vars, g_var
   }
   cat("\n . . Output format: ", format_stacked_or_wide, "\n")
 
-  return(result)
+    out  <- list("stats" = result
+                 , "params" = list("x_vars" = x_vars
+                                   , "g_var" = g_var
+                                   , "subset_vars" = subset_vars))
+    
+  return(out)
 }
 
 
@@ -338,6 +343,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
