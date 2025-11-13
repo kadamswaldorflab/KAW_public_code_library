@@ -151,7 +151,7 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
                         , pch=value_source), size=2, cex=2.5) + 
       # Facet the plot by the 'facet_by' variable, allow each facet to have its own y-scale
       # nrow is controlled by n_facet_rows parameter (often 1 for a single row layout).
-      facet_wrap(as.formula(paste("~", facet_by)), scales="free_y",nrow=n_facet_rows ) + 
+      facet_wrap(as.formula(paste("~", facet_by)), scales="free_y",nrow=n_facet_rows, labeller =  label_wrap_gen() ) + 
       # (Commented out) alternative y-scale transformation: log10. Left disabled.
       # scale_y_log10( labels = comma_format(big.mark = ",", decimal_mark="."))
       # Use continuous y-scale with formatted labels (commas for thousands).
@@ -290,6 +290,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
