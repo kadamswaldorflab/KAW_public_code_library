@@ -110,7 +110,7 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
   for(i in 1:length(group_by_levs))
   {
     # Print the current group value to the console (progress indicator).
-    cat(group_by_levs[i], "..")
+    cat(group_by_levs[i])
 
     # Create a title string for the plot using the group value.
     mytitle  <- group_by_levs[i]
@@ -120,14 +120,14 @@ facet_plots_1row <- function(df, dfstats, group_by, facet_by, x_var, y_var, colo
                         !is.na(.data[[y_var]]))
     if (nrow(tmp) == 0) {
     # placeholder plot
-      cat("0recs")
+      cat("(0recs)..")
        p1  <- ggplot() +  annotate("text", x = 0.5, y = 0.5, 
         label = paste0("No data available for [", y_var, "] when ", group_by," = '", group_by_levs[i],"'" ), size = 4) +
         theme_void()
         
         mytitle <- paste0(mytitle, "_no_data")
     } else {
-                          
+     cat("..")                     
     # Build the ggplot for this subset:
     p1 <- ggplot(tmp)+
       # Manually define the colors used for the color aesthetic.
@@ -289,6 +289,7 @@ facet_plots_1row_add_sig  <- function(plotlist, sigstats, mymethod="T-test")
 
 
 # End of file
+
 
 
 
