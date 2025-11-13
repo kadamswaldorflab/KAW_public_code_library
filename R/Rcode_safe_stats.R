@@ -301,10 +301,10 @@ safe_pairwise_tests  <- function(df, x_vars, g_var
   if(testtype=="both") {
     result_t <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
     result_w <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "Wilcoxon", ndigits, show_p_LT_point1)
-    if(format_stacked_or_wide = "stacked") { 
-        result  <- bind_rows(result_t, result_w) 
-    } else {
+    if(format_stacked_or_wide = "wide") { 
         result  <- merge_safe_t_wilc(result_t, result_w)    
+    } else  {
+        result  <- bind_rows(result_t, result_w)
     }
     } else if(testtype=="T-test") {
     result <- safe_pairwise_test(df, x_vars, g_var, subset_vars, "T-test", ndigits, show_p_LT_point1)
@@ -338,6 +338,7 @@ df_pairwisetests  <-
 
 return(df_pairwisetests)
 }
+
 
 
 
